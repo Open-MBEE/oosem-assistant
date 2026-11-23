@@ -1,0 +1,8 @@
+node_modules/
+dist/
+*.tsbuildinfo
+# packed releases; the vendored SDK tarball is committed
+*.tgz
+!vendor/sysml/*.tgz
+.sysand/
+packages/cli/schema/

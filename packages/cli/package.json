@@ -1,0 +1,20 @@
+{
+  "name": "oosem-cli",
+  "version": "0.1.0",
+  "description": "OOSEM Assistant command-line tool",
+  "license": "Apache-2.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "oosem": "./dist/main.js"
+  },
+  "files": [
+    "dist",
+    "schema"
+  ],
+  "dependencies": {
+    "ajv": "8.20.0",
+    "oosem": "0.1.0",
+    "sysml": "file:../../vendor/sysml/sysml-0.2.0.tgz"
+  }
+}

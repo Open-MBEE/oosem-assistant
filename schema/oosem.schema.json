@@ -1,0 +1,1205 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "oosem.schema.json",
+  "title": "OOSEM Assistant",
+  "description": "Every JSON the OOSEM Assistant reads or writes. Analysis, DashboardModel and ValidationReport carry schemaVersion. Refer to a shape as oosem.schema.json#/$defs/<Name>.",
+  "$defs": {
+    "PhaseNames": {
+      "description": "The names of one phase in the method library.",
+      "type": "object",
+      "properties": {
+        "concept": {
+          "type": "string"
+        },
+        "collection": {
+          "type": "string"
+        },
+        "metadata": {
+          "type": "string"
+        },
+        "keyword": {
+          "type": "string"
+        },
+        "suffix": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "concept",
+        "collection",
+        "metadata",
+        "keyword",
+        "suffix",
+        "label"
+      ],
+      "additionalProperties": false
+    },
+    "Vocabulary": {
+      "description": "Every library name the core uses, unescaped.",
+      "type": "object",
+      "properties": {
+        "root": {
+          "type": "string"
+        },
+        "conceptsPackage": {
+          "type": "string"
+        },
+        "metadataPackage": {
+          "type": "string"
+        },
+        "blackbox": {
+          "$ref": "#/$defs/PhaseNames"
+        },
+        "graybox": {
+          "$ref": "#/$defs/PhaseNames"
+        },
+        "whitebox": {
+          "$ref": "#/$defs/PhaseNames"
+        }
+      },
+      "required": [
+        "root",
+        "conceptsPackage",
+        "metadataPackage",
+        "blackbox",
+        "graybox",
+        "whitebox"
+      ],
+      "additionalProperties": false
+    },
+    "PartialVocabulary": {
+      "description": "A vocabulary file: missing keys fall back to the defaults.",
+      "type": "object",
+      "properties": {
+        "root": {
+          "type": "string"
+        },
+        "conceptsPackage": {
+          "type": "string"
+        },
+        "metadataPackage": {
+          "type": "string"
+        },
+        "blackbox": {
+          "type": "object",
+          "properties": {
+            "concept": {
+              "type": "string"
+            },
+            "collection": {
+              "type": "string"
+            },
+            "metadata": {
+              "type": "string"
+            },
+            "keyword": {
+              "type": "string"
+            },
+            "suffix": {
+              "type": "string"
+            },
+            "label": {
+              "type": "string"
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        },
+        "graybox": {
+          "type": "object",
+          "properties": {
+            "concept": {
+              "type": "string"
+            },
+            "collection": {
+              "type": "string"
+            },
+            "metadata": {
+              "type": "string"
+            },
+            "keyword": {
+              "type": "string"
+            },
+            "suffix": {
+              "type": "string"
+            },
+            "label": {
+              "type": "string"
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        },
+        "whitebox": {
+          "type": "object",
+          "properties": {
+            "concept": {
+              "type": "string"
+            },
+            "collection": {
+              "type": "string"
+            },
+            "metadata": {
+              "type": "string"
+            },
+            "keyword": {
+              "type": "string"
+            },
+            "suffix": {
+              "type": "string"
+            },
+            "label": {
+              "type": "string"
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "Extensions": {
+      "description": "The method's extensions beyond plain OOSEM; both are off by default.",
+      "type": "object",
+      "properties": {
+        "properties": {
+          "type": "boolean"
+        },
+        "inPhaseSpecialization": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "properties",
+        "inPhaseSpecialization"
+      ],
+      "additionalProperties": false
+    },
+    "Phase": {
+      "enum": [
+        "blackbox",
+        "graybox",
+        "whitebox"
+      ]
+    },
+    "ElementRef": {
+      "description": "An element: its id in the model, and its qualified name (null where KerML gives none).",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "qualifiedName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "qualifiedName"
+      ],
+      "additionalProperties": false
+    },
+    "Rule": {
+      "enum": [
+        "R1",
+        "R2",
+        "R3",
+        "R4",
+        "R5",
+        "R6",
+        "R7",
+        "R8",
+        "R9",
+        "R10",
+        "R11",
+        "R12",
+        "R13"
+      ]
+    },
+    "Finding": {
+      "type": "object",
+      "properties": {
+        "rule": {
+          "$ref": "#/$defs/Rule"
+        },
+        "severity": {
+          "enum": [
+            "error",
+            "warning"
+          ]
+        },
+        "target": {
+          "$ref": "#/$defs/ElementRef"
+        },
+        "block": {
+          "type": "string",
+          "description": "The id of the block it concerns; for R10 on a feature, the whitebox."
+        },
+        "message": {
+          "type": "string"
+        },
+        "related": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ElementRef"
+          }
+        }
+      },
+      "required": [
+        "rule",
+        "severity",
+        "target",
+        "block",
+        "message"
+      ],
+      "additionalProperties": false
+    },
+    "FeatureRole": {
+      "enum": [
+        "property",
+        "subsystem",
+        "choice",
+        "untracked",
+        "misplaced"
+      ]
+    },
+    "Multiplicity": {
+      "description": "upper null: unbounded (*).",
+      "type": "object",
+      "properties": {
+        "lower": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "upper": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "lower",
+        "upper"
+      ],
+      "additionalProperties": false
+    },
+    "FeatureInfo": {
+      "description": "A feature a block holds, owned or inherited. For an inherited one, ref is the original declaration and inheritedFrom the block it was copied from.",
+      "type": "object",
+      "properties": {
+        "ref": {
+          "$ref": "#/$defs/ElementRef"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "keyword": {
+          "type": "string"
+        },
+        "role": {
+          "$ref": "#/$defs/FeatureRole"
+        },
+        "phase": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Phase"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "types": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ElementRef"
+          }
+        },
+        "redefines": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ElementRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "inheritedFrom": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "multiplicity": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Multiplicity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "ref",
+        "name",
+        "keyword",
+        "role",
+        "phase",
+        "types",
+        "redefines",
+        "inheritedFrom",
+        "multiplicity"
+      ],
+      "additionalProperties": false
+    },
+    "BlockInfo": {
+      "type": "object",
+      "properties": {
+        "ref": {
+          "$ref": "#/$defs/ElementRef"
+        },
+        "name": {
+          "type": "string"
+        },
+        "keyword": {
+          "type": "string"
+        },
+        "phase": {
+          "$ref": "#/$defs/Phase"
+        },
+        "library": {
+          "type": "boolean"
+        },
+        "passes": {
+          "type": "boolean"
+        },
+        "features": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/FeatureInfo"
+          }
+        }
+      },
+      "required": [
+        "ref",
+        "name",
+        "keyword",
+        "phase",
+        "library",
+        "passes",
+        "features"
+      ],
+      "additionalProperties": false
+    },
+    "Edge": {
+      "description": "A graph edge between blocks, by id. decomposes and realizes carry the subsystem usage.",
+      "type": "object",
+      "properties": {
+        "kind": {
+          "enum": [
+            "phase",
+            "inPhase",
+            "decomposes",
+            "realizes"
+          ]
+        },
+        "from": {
+          "type": "string"
+        },
+        "to": {
+          "type": "string"
+        },
+        "usage": {
+          "$ref": "#/$defs/ElementRef"
+        }
+      },
+      "required": [
+        "kind",
+        "from",
+        "to"
+      ],
+      "additionalProperties": false
+    },
+    "Analysis": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": 1
+        },
+        "vocabulary": {
+          "$ref": "#/$defs/Vocabulary"
+        },
+        "extensions": {
+          "$ref": "#/$defs/Extensions"
+        },
+        "libraryFound": {
+          "type": "boolean"
+        },
+        "blocks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/BlockInfo"
+          }
+        },
+        "edges": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Edge"
+          }
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Finding"
+          }
+        },
+        "usageStyleBoxes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ElementRef"
+          }
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "vocabulary",
+        "extensions",
+        "libraryFound",
+        "blocks",
+        "edges",
+        "findings",
+        "usageStyleBoxes"
+      ],
+      "additionalProperties": false
+    },
+    "DashboardModel": {
+      "description": "The dashboard as data: layout, rows, lines and badges. Selection, highlighting and the Show menu are the UI's, over the analysis's edges.",
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": 1
+        },
+        "libraryFound": {
+          "type": "boolean"
+        },
+        "columns": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "$ref": "#/$defs/DashboardColumn"
+            },
+            {
+              "$ref": "#/$defs/DashboardColumn"
+            },
+            {
+              "$ref": "#/$defs/DashboardColumn"
+            }
+          ],
+          "items": false,
+          "minItems": 3
+        },
+        "blocks": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/DashboardBlock"
+          }
+        },
+        "notice": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                },
+                "usages": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/$defs/ElementRef"
+                  }
+                }
+              },
+              "required": [
+                "message",
+                "usages"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "libraryFound",
+        "columns",
+        "blocks",
+        "notice"
+      ],
+      "additionalProperties": false
+    },
+    "DashboardColumn": {
+      "type": "object",
+      "properties": {
+        "phase": {
+          "$ref": "#/$defs/Phase"
+        },
+        "label": {
+          "type": "string"
+        },
+        "groups": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DashboardGroup"
+          }
+        }
+      },
+      "required": [
+        "phase",
+        "label",
+        "groups"
+      ],
+      "additionalProperties": false
+    },
+    "DashboardGroup": {
+      "description": "All blackboxes, the blocks under one parent, or a column's orphans.",
+      "type": "object",
+      "properties": {
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "parent": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "orphans": {
+          "type": "boolean"
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "title",
+        "parent",
+        "orphans",
+        "rows"
+      ],
+      "additionalProperties": false
+    },
+    "DashboardBlock": {
+      "type": "object",
+      "properties": {
+        "ref": {
+          "$ref": "#/$defs/ElementRef"
+        },
+        "name": {
+          "type": "string"
+        },
+        "phase": {
+          "$ref": "#/$defs/Phase"
+        },
+        "library": {
+          "type": "boolean"
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "lines": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DashboardLine"
+          }
+        },
+        "untracked": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "ref",
+        "name",
+        "phase",
+        "library",
+        "errors",
+        "warnings",
+        "lines",
+        "untracked"
+      ],
+      "additionalProperties": false
+    },
+    "DashboardLine": {
+      "description": "One selectable line under an expanded row; target is the block it refers to.",
+      "type": "object",
+      "properties": {
+        "kind": {
+          "enum": [
+            "usedIn",
+            "subsystem",
+            "choice",
+            "unintegrated"
+          ]
+        },
+        "text": {
+          "type": "string"
+        },
+        "usage": {
+          "$ref": "#/$defs/ElementRef"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "target": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "redefines": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ElementRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "inherited": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "kind",
+        "text",
+        "usage",
+        "owner",
+        "target",
+        "redefines",
+        "inherited"
+      ],
+      "additionalProperties": false
+    },
+    "SubsystemChoice": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "realizeWith": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "realizeWith"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "unintegrated": {
+              "const": true
+            }
+          },
+          "required": [
+            "unintegrated"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "stub": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "stub"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "GenerationRequest": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "enum": [
+            "graybox",
+            "whitebox"
+          ]
+        },
+        "subject": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "folder": {
+          "type": "string"
+        },
+        "subsystems": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "usage": {
+                "type": "string"
+              },
+              "choice": {
+                "$ref": "#/$defs/SubsystemChoice"
+              },
+              "newName": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "usage",
+              "choice"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "kind",
+        "subject",
+        "name",
+        "folder"
+      ],
+      "additionalProperties": false
+    },
+    "GenerationResult": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "ok": {
+              "const": true
+            },
+            "unit": {
+              "type": "string"
+            },
+            "text": {
+              "type": "string"
+            },
+            "newBlocks": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "ok",
+            "unit",
+            "text",
+            "newBlocks"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "ok": {
+              "const": false
+            },
+            "problems": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "ok",
+            "problems"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "PartialExtensions": {
+      "description": "Extensions to switch on or off; the rest keep their defaults (off).",
+      "type": "object",
+      "properties": {
+        "properties": {
+          "type": "boolean"
+        },
+        "inPhaseSpecialization": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ValidationReport": {
+      "description": "oosem validate --json, and serve's validate: the findings and the usage-style boxes.",
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": 1
+        },
+        "libraryFound": {
+          "type": "boolean"
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Finding"
+          }
+        },
+        "usageStyleBoxes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ElementRef"
+          }
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "libraryFound",
+        "findings",
+        "usageStyleBoxes"
+      ],
+      "additionalProperties": false
+    },
+    "ServeRequest": {
+      "description": "oosem serve --stdio: one JSON-RPC 2.0 request or notification per line.",
+      "type": "object",
+      "properties": {
+        "jsonrpc": {
+          "const": "2.0"
+        },
+        "id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "method": {
+          "enum": [
+            "open",
+            "reload",
+            "analyze",
+            "validate",
+            "dashboard",
+            "defaultName",
+            "generate",
+            "shutdown"
+          ]
+        },
+        "params": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "jsonrpc",
+        "method"
+      ],
+      "additionalProperties": false
+    },
+    "ServeResponse": {
+      "description": "One JSON-RPC 2.0 response per line. Error codes: -32700 not JSON, -32600 not a request, -32601 no such method, -32602 params not as the schema says, -32000 input the CLI cannot use (the message says why), -32001 no model open, -32603 internal.",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "jsonrpc": {
+              "const": "2.0"
+            },
+            "id": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "result": {}
+          },
+          "required": [
+            "jsonrpc",
+            "id",
+            "result"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "jsonrpc": {
+              "const": "2.0"
+            },
+            "id": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "error": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "code",
+                "message"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "jsonrpc",
+            "id",
+            "error"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "ServeOpenParams": {
+      "description": "serve's open: the command line's inputs. Paths are relative to the server's working folder.",
+      "type": "object",
+      "properties": {
+        "folder": {
+          "type": "string"
+        },
+        "source": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "library": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "exclude": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "stdlib": {
+          "description": "the standard library's folder; false for none; the SDK's by default",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "const": false
+            }
+          ]
+        },
+        "vocabulary": {
+          "$ref": "#/$defs/PartialVocabulary"
+        },
+        "extensions": {
+          "$ref": "#/$defs/PartialExtensions"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ServeOpenResult": {
+      "description": "serve's open and reload: what was loaded.",
+      "type": "object",
+      "properties": {
+        "layout": {
+          "enum": [
+            "sysand",
+            "kotar",
+            "files"
+          ]
+        },
+        "root": {
+          "type": "string"
+        },
+        "units": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "libraries": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "libraryFound": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "layout",
+        "root",
+        "units",
+        "libraries",
+        "libraryFound"
+      ],
+      "additionalProperties": false
+    },
+    "ServeDefaultNameParams": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "enum": [
+            "graybox",
+            "whitebox",
+            "stub"
+          ]
+        },
+        "of": {
+          "type": "string",
+          "description": "the block's id or qualified name"
+        },
+        "folder": {
+          "type": "string",
+          "description": "the folder the new file goes to, relative to the root; a name with a file there is taken"
+        }
+      },
+      "required": [
+        "kind",
+        "of"
+      ],
+      "additionalProperties": false
+    },
+    "ServeDefaultNameResult": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "additionalProperties": false
+    },
+    "ServeGenerateParams": {
+      "type": "object",
+      "properties": {
+        "request": {
+          "$ref": "#/$defs/GenerationRequest"
+        },
+        "write": {
+          "type": "boolean",
+          "description": "write the new file under the root; never overwrites"
+        }
+      },
+      "required": [
+        "request"
+      ],
+      "additionalProperties": false
+    },
+    "ServeGenerateResult": {
+      "type": "object",
+      "properties": {
+        "generation": {
+          "$ref": "#/$defs/GenerationResult"
+        },
+        "written": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "the file written, absolute; null when not written"
+        }
+      },
+      "required": [
+        "generation",
+        "written"
+      ],
+      "additionalProperties": false
+    }
+  }
+}
